@@ -26,7 +26,6 @@ struct Token {
 // Token currently under consideration
 Token *token;
 
-
 // Function to report an error
 // Takes the same arguments as printf
 void error(char *fmt, ...) {
@@ -74,39 +73,45 @@ bool at_eof() {
 }
 
 // Create a new token and append it to cur.
-Token *new_token(TokenKind kind, Token *cur, char *str) {
-  Token *tok = calloc(1, sizeof(Token));
-  tok->kind = kind;
-  tok->str = str;
-  cur->next = tok;
-  return tok;
+Token *new_token(TokenKind kind, Token *current_token, char *str) {
+  Token *new_token = calloc(1, sizeof(Token));
+  new_token->kind = kind;
+  new_token->str = str;
+  current_token->next = new_token;
+  return new_token;
 }
 
 // Tokenize the input string p and return it.
 Token *tokenize(char *p) {
   Token head;
   head.next = NULL;
-  Token *cur = &head;
+  Token *current_token = &head;
 
   while (*p) {
+    // Skip whitespace characters.
     if (isspace(*p)) {
       p++;
       continue;
     }
+
+    // Punctuator
     if (*p == '+' || *p == '-') {
-      cur = new_token(TK_RESERVED, cur, p++);
+      current_token = new_token(TK_RESERVED, current_token, p++);
       continue;
     }
+
+    // Integer literal
     if (isdigit(*p)) {
-      cur = new_token(TK_NUM, cur, p);
+      current_token = new_token(TK_NUM, current_token, p);
       // strtol automatically advances the pointer
       // to the address of the character after the number.
-      cur->val = strtol(p, &p, 10);
+      current_token->val = strtol(p, &p, 10);
       continue;
     }
+
     error("Can't tokenize.");
   }
-  new_token(TK_EOF, cur, p);
+  new_token(TK_EOF, current_token, p);
   return head.next;
 }
 
