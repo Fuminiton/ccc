@@ -54,7 +54,7 @@ void gen(Node *node) {
 void codegen(Node *node) {
   printf(".intel_syntax noprefix\n");
   printf(".global main\n");
-  printf("main:\n")
+  printf("main:\n");
 
   gen(node);
   

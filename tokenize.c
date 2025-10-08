@@ -76,16 +76,6 @@ bool at_eof() {
   return token->kind == TK_EOF;
 }
 
-// Create a new token and append it to cur.
-Token *new_token(TokenKind kind, Token *current_token, char *str, int len) {
-  Token *new_token = calloc(1, sizeof(Token));
-  new_token->kind = kind;
-  new_token->str = str;
-  new_token->len = len;
-  current_token->next = new_token;
-  return new_token;
-}
-
 bool startwith(char *p, char *q) {
   return memcmp(p, q, strlen(q)) == 0;
 }
@@ -99,10 +89,6 @@ Token *new_token(TokenKind kind, Token *current_token, char *str, int len) {
   new_token->len = len;
   current_token->next = new_token;
   return new_token;
-}
-
-bool startwith(char *p, char *q) {
-  return memcmp(p, q, strlen(q)) == 0;
 }
 
 // Tokenize the input string p and return it.
