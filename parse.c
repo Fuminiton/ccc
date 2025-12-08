@@ -1,6 +1,9 @@
 #include "ccc.h"
 
 
+Node *code[100];
+
+
 Node *new_node(NodeKind kind) {
   Node *node = calloc(1, sizeof(Node));
   node->kind = kind;
@@ -29,9 +32,37 @@ Node *mul();
 Node *unary();
 Node *primary();
 
-// expr = equality
+
+
+// program = stmt*
+void program() {
+  int i = 0;
+  while (!at_eof()) {
+    code[i] = stmt();
+    i++;
+  }
+  code[i] = NULL;
+}
+
+// stmt = expr;
+Node *stmt() {
+  Node *node = expr();
+  expect(";");
+  return node;
+}
+
+// expr = assign
 Node *expr() {
-  return equality();
+  return assign();
+}
+
+// assign = equality ("=" assign)?
+Node *assign() {
+  Node *node = equality();
+  if (consume("=")) {
+    node = new_binary(ND_ASSIGN, node, assign());
+  }
+  return node;
 }
 
 // equality = relational ("==" relational | "!=" relational)*
@@ -128,5 +159,13 @@ Node *primary() {
     expect(")");
     return node;
   }
+
+  Token *t = consume_identifier();
+  if (t) {
+    Node *node = new_node(ND_LVAR);
+    node->offset = (t->str[0] - 'a' + 1) * 8;
+    return node;
+  }
+
   return new_num(expect_number());
 }

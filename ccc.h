@@ -11,6 +11,7 @@
 //
 typedef enum {
   TK_RESERVED,     // Keyword or punctuator
+  TK_IDENTIFER,    // Identifier 
   TK_NUM,          // Integer literal
   TK_EOF,          // End-of-file marker
 } TokenKind;
@@ -33,6 +34,7 @@ int expect_number();
 bool at_eof();
 Token *new_token(TokenKind kind, Token *current_token, char *str, int len);
 Token *tokenize();
+Token *consume_identifier();
 
 extern char *user_input;  // Input program
 extern Token *token;      // Token currently under consideration
@@ -51,6 +53,8 @@ typedef enum {
   ND_LT,           // <
   ND_LE,           // <=
   ND_NUM,          // Integer
+  ND_ASSIGN,       // =
+  ND_LVAR,         // Local VARiable
 } NodeKind;
 
 typedef struct Node Node;
@@ -60,12 +64,19 @@ struct Node {
   Node *lhs;       // Left-hand side
   Node *rhs;       // Right-hand side
   int val;         // Used if kind == ND_NUM
+  int offset;      // Used if kind == ND_LVAR
 };
 
+extern Node *code[100];
+
+void program();
+Node *stmt();
+Node *assign();
 Node *expr();
 
 
 // 
 // codegen.c
 // 
+void gen();
 void codegen(Node *node);

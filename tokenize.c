@@ -44,6 +44,16 @@ bool consume(char *op) {
   return true;
 }
 
+Token *consume_identifier() {
+  if (token->kind != TK_IDENTIFER) {
+    return NULL;
+  }
+  Token *t = token;
+  token = token->next;
+  return t;
+}
+
+
 // If the next token matches the expected symbol,
 
 // read one token.
@@ -80,6 +90,10 @@ bool startwith(char *p, char *q) {
   return memcmp(p, q, strlen(q)) == 0;
 }
 
+bool is_local_variable(char *p) {
+  return 'a' <= *p && *p <= 'z';
+}
+
 // Create a new token and append it to cur.
 
 Token *new_token(TokenKind kind, Token *current_token, char *str, int len) {
@@ -114,10 +128,11 @@ Token *tokenize() {
     }
 
     // Single-letter punctuator
-    if (strchr("+-*/()<>", *p)) {
+    if (strchr("+-*/()<>;=", *p)) {
       current_token = new_token(TK_RESERVED, current_token, p++, 1);
       continue;
     }
+
     // Integer literal
     if (isdigit(*p)) {
       current_token = new_token(TK_NUM, current_token, p, 0);
@@ -126,6 +141,11 @@ Token *tokenize() {
       // to the address of the character after the number.
       current_token->val = strtol(p, &p, 10);
       current_token->len = p - q;
+      continue;
+    }
+
+    if (is_local_variable(p)) {
+      current_token = new_token(TK_IDENTIFER, current_token, p++, 1);
       continue;
     }
 
