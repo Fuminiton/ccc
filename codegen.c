@@ -11,6 +11,14 @@ void gen_local_variable(Node *node) {
 }
 
 void codegen(Node *node) {
+  if (node->kind == ND_RETURN) {
+    codegen(node->lhs);
+    printf("  pop rax\n");
+    printf("  mov rsp, rbp\n");
+    printf("  pop rbp\n");
+    printf("  ret\n");
+    return ;
+  }
   if (node->kind == ND_ASSIGN) {
     gen_local_variable(node->lhs);
     codegen(node->rhs);
@@ -22,6 +30,13 @@ void codegen(Node *node) {
   }
   if (node->kind == ND_NUM) {
     printf("  push %d\n", node->val);
+    return ;
+  }
+  if (node->kind == ND_LVAR) {
+    gen_local_variable(node);
+    printf("  pop rax\n");
+    printf("  mov rax, [rax]\n");
+    printf("  push rax\n");
     return ;
   }
   codegen(node->lhs);
