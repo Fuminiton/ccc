@@ -1,8 +1,7 @@
 #include "ccc.h"
 
-
 Node *code[100];
-
+LVar *locals;
 
 Node *new_node(NodeKind kind) {
   Node *node = calloc(1, sizeof(Node));
@@ -23,6 +22,18 @@ Node *new_num(int val) {
   return node;
 }
 
+LVar *find_local_variable(Token *t) {
+  for (LVar *v = locals; v; v = v->next) {
+    if (v->len != t->len) {
+      continue;
+    }
+    if (memcmp(t->str, v->name, v->len) != 0) {
+      continue;
+    }
+    return v;
+  }
+  return NULL;
+}
 
 Node *expr();
 Node *equality();
@@ -33,10 +44,10 @@ Node *unary();
 Node *primary();
 
 
-
 // program = stmt*
 void program() {
   int i = 0;
+  locals = NULL;
   while (!at_eof()) {
     code[i] = stmt();
     i++;
@@ -165,11 +176,23 @@ Node *primary() {
     expect(")");
     return node;
   }
-
   Token *t = consume_identifier();
   if (t) {
     Node *node = new_node(ND_LVAR);
-    node->offset = (t->str[0] - 'a' + 1) * 8;
+    LVar *lvar = find_local_variable(t);
+    if (!lvar) {
+      lvar = calloc(1, sizeof(LVar));
+      lvar->next = locals;
+      lvar->name = t->str;
+      lvar->len = t->len;
+      if (locals) {
+        lvar->offset = locals->offset + 8;
+      } else {
+        lvar->offset = 8;
+      } 
+      locals = lvar;
+    }
+    node->offset = lvar->offset;
     return node;
   }
 

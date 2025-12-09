@@ -91,7 +91,7 @@ bool startwith(char *p, char *q) {
 }
 
 bool is_local_variable(char *p) {
-  return 'a' <= *p && *p <= 'z';
+  return ('a' <= *p && *p <= 'z') || (*p == '_');
 }
 
 // Create a new token and append it to cur.
@@ -125,7 +125,6 @@ Token *tokenize() {
       continue;
     }
 
-
     // Multi-letter punctuator
     if (startwith(p, "==") || startwith(p, "!=") ||
         startwith(p, "<=") || startwith(p, ">=")) {
@@ -151,8 +150,13 @@ Token *tokenize() {
       continue;
     }
 
+    // Local variable
     if (is_local_variable(p)) {
-      current_token = new_token(TK_IDENTIFER, current_token, p++, 1);
+      char *start = p;
+      while (is_local_variable(p)) {
+        p++;
+      }
+      current_token = new_token(TK_IDENTIFER, current_token, start, p - start);
       continue;
     }
 

@@ -43,6 +43,16 @@ extern Token *token;      // Token currently under consideration
 //
 // parse.c
 //
+typedef struct LVar LVar;
+
+struct LVar {
+  LVar *next;   // Next variable or NULL
+  char *name;   // Variable name
+  int len;      // Name length
+  int offset;   // Offset from RBP
+};
+
+
 typedef enum {
   ND_ADD,          // +
   ND_SUB,          // -
@@ -69,6 +79,8 @@ struct Node {
 };
 
 extern Node *code[100];
+extern LVar *locals;
+LVar *find_local_variable(Token *t);
 
 void program();
 Node *stmt();

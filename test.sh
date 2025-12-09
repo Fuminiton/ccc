@@ -47,5 +47,6 @@ assert 0 "0>=1;"
 
 assert 5 "a=2; b=3; a+b;"
 assert 12 "a=20; b =8; return a-b;"
+assert 20 "ab=20; abc=20; return ab*2-abc;"
 
 echo OK
