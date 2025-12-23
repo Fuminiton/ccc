@@ -55,8 +55,19 @@ void program() {
   code[i] = NULL;
 }
 
-// stmt = return expr; | expr;
+// stmt = "if" "("" expr ")" stmt ("else" stmt)? | "return" expr ";" | expr";"
 Node *stmt() {
+  if (consume("if")) {
+    Node *node = new_node(ND_IF);
+    expect("(");
+    node->condition = expr();
+    expect(")");
+    node->then_clause = stmt();
+    if (consume("else")) {
+      node->else_clause = stmt();
+    }
+    return node;
+  }
   if (consume("return")) {
     Node *node = new_node(ND_RETURN);
     node->lhs = expr();

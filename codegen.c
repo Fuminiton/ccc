@@ -11,6 +11,29 @@ void gen_local_variable(Node *node) {
 }
 
 void codegen(Node *node) {
+  static int label_count = 0;
+
+  if (node->kind == ND_IF) {
+    int c = label_count;
+    label_count++;
+    codegen(node->condition);
+    printf("  pop rax\n");
+    printf("  cmp rax, 0\n");
+    if (node->else_clause) {
+      printf("  je .L.else.%d\n", c);
+      codegen(node->then_clause);
+      printf("  jmp .L.end.%d\n", c);
+      printf(".L.else.%d:\n", c);
+      codegen(node->else_clause);
+      printf(".L.end.%d:\n", c);
+    }
+    else {
+      printf("  je .L.end.%d\n", c);
+      codegen(node->then_clause);
+      printf(".L.end.%d:\n", c);
+    }
+    return ;
+  }
   if (node->kind == ND_RETURN) {
     codegen(node->lhs);
     printf("  pop rax\n");

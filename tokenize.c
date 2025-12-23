@@ -125,6 +125,18 @@ Token *tokenize() {
       continue;
     }
 
+    if (strncmp(p, "if", 2) == 0 && !isalnum(p[2])) {
+      current_token = new_token(TK_RESERVED, current_token, p, 2);
+      p += 2;
+      continue;
+    }
+
+    if (strncmp(p, "else", 4) == 0 && !isalnum(p[4])) {
+      current_token = new_token(TK_RESERVED, current_token, p, 4);
+      p += 4;
+      continue;
+    }
+
     // Multi-letter punctuator
     if (startwith(p, "==") || startwith(p, "!=") ||
         startwith(p, "<=") || startwith(p, ">=")) {

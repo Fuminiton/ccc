@@ -66,6 +66,7 @@ typedef enum {
   ND_ASSIGN,       // =
   ND_LVAR,         // Local VARiable
   ND_RETURN,       // Return
+  ND_IF,           // If statement
 } NodeKind;
 
 typedef struct Node Node;
@@ -76,6 +77,9 @@ struct Node {
   Node *rhs;       // Right-hand side
   int val;         // Used if kind == ND_NUM
   int offset;      // Used if kind == ND_LVAR
+  Node *condition;
+  Node *then_clause;
+  Node *else_clause;
 };
 
 extern Node *code[100];
