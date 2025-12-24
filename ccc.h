@@ -67,6 +67,7 @@ typedef enum {
   ND_LVAR,         // Local VARiable
   ND_RETURN,       // Return
   ND_IF,           // If statement
+  ND_WHILE,        // While statement
 } NodeKind;
 
 typedef struct Node Node;

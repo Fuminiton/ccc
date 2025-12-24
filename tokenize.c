@@ -137,6 +137,12 @@ Token *tokenize() {
       continue;
     }
 
+    if (strncmp(p, "while", 5) == 0 && !isalnum(p[5])) {
+      current_token = new_token(TK_RESERVED, current_token, p, 5);
+      p += 5;
+      continue;
+    }
+
     // Multi-letter punctuator
     if (startwith(p, "==") || startwith(p, "!=") ||
         startwith(p, "<=") || startwith(p, ">=")) {

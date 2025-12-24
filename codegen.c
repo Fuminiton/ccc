@@ -34,6 +34,19 @@ void codegen(Node *node) {
     }
     return ;
   }
+  if (node->kind == ND_WHILE) {
+    int c = label_count;
+    label_count++;
+    printf(".L.begin.%d:\n", c);
+    codegen(node->condition);
+    printf("  pop rax\n");
+    printf("  cmp rax, 0\n");
+    printf("  je .L.end.%d\n", c);
+    codegen(node->then_clause);
+    printf("  jmp .L.begin.%d\n", c);
+    printf(".L.end.%d:\n", c);
+    return ;
+  }
   if (node->kind == ND_RETURN) {
     codegen(node->lhs);
     printf("  pop rax\n");

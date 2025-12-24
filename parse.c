@@ -55,7 +55,10 @@ void program() {
   code[i] = NULL;
 }
 
-// stmt = "if" "("" expr ")" stmt ("else" stmt)? | "return" expr ";" | expr";"
+// stmt = "if" "("" expr ")" stmt ("else" stmt)?
+//      | "while" "(" expr ")" stmt
+//      | "return" expr ";"
+//      | expr ";"
 Node *stmt() {
   if (consume("if")) {
     Node *node = new_node(ND_IF);
@@ -68,6 +71,16 @@ Node *stmt() {
     }
     return node;
   }
+
+  if (consume("while")) {
+    Node *node = new_node(ND_WHILE);
+    expect("(");
+    node->condition = expr();
+    expect(")");
+    node->then_clause = stmt();
+    return node;
+  }
+
   if (consume("return")) {
     Node *node = new_node(ND_RETURN);
     node->lhs = expr();

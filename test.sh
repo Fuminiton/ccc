@@ -52,4 +52,6 @@ assert 20 "ab=20; abc=20; return ab*2-abc;"
 assert 10 "x = 4; if (x < 5) return 10; return 9;"
 assert 1 "a = b = 1; if (a == b) return 1; else return 0;"
 
+assert 5 "x = 0; while (x < 5) x = x + 1; return x;"
+
 echo OK
